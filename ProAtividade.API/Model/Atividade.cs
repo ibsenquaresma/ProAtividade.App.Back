@@ -1,4 +1,6 @@
-﻿namespace ProAtividade.API.Model
+﻿using ProAtividade.API.Model.Enum;
+
+namespace ProAtividade.API.Model
 {
     public class Atividade
     {
@@ -8,8 +10,7 @@
 
         public string Descricao { get; set; }
 
-        public string Prioridade { get; set; }
-
+        public Prioridade Prioridade { get; set; }
 
         public Atividade() { }
 

@@ -1,5 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using ProAtividade.API.Data;
 using ProAtividade.API.Model;
 
 namespace ProAtividade.API.Controllers
@@ -8,49 +8,61 @@ namespace ProAtividade.API.Controllers
     [ApiController]
     public class AtividadeController : ControllerBase
     {
-        public IEnumerable<Atividade> Atividades = new List<Atividade>()
-            {
-                new Atividade(1),
-                new Atividade(2),
-                new Atividade(3)
-            };
+        private readonly DataContext _dataContext;
 
-        public AtividadeController() { }
+        public AtividadeController(DataContext dataContext) 
+        {
+            _dataContext = dataContext;
+        }
         
         [HttpGet]
         public IEnumerable<Atividade> Get()
         {
-            return Atividades;
+            return _dataContext.Atividades;
         }
 
         [HttpGet("{id}")]
         public Atividade Get(int id)
         {
-            return Atividades.FirstOrDefault(ativ => ativ.Id == id);
+            return _dataContext.Atividades.FirstOrDefault(ativ => ativ.Id == id);
         }
 
         [HttpPost]
         public IEnumerable<Atividade> Post(Atividade atividade)
         {
-            return Atividades.Append<Atividade>(atividade);
-        }
+            _dataContext.Atividades.Add(atividade);
 
-        [HttpPut]
-        public string Put()
-        {
-            return "Meu primeiro put";
+            if (_dataContext.SaveChanges() > 0)
+                return _dataContext.Atividades;
+            else
+                throw new Exception("Atividade não adicionada");
         }
 
         [HttpPut("{id}")]
-        public string Put(int id)
+        public Atividade Put(int id, Atividade atividade)
         {
-            return $"Meu primeiro put com parametro {id}";
+            if (atividade.Id != id) throw new Exception("Você está tentando atualizar a atividade errada");
+
+            _dataContext.Update(atividade);
+
+            if (_dataContext.SaveChanges() > 0)
+                return _dataContext.Atividades.FirstOrDefault(ativ => ativ.Id == id);
+            else
+                return new Atividade();
+
         }
 
         [HttpDelete("{id}")]
-        public string Delete(int id)
+        public Boolean Delete(int id)
         {
-            return $"Meu primeiro delete {id}";
+            var atividade = _dataContext.Atividades.FirstOrDefault(ativ => ativ.Id == id);
+
+            if (atividade == null)
+                throw new Exception("Atividade não existe");
+
+            _dataContext.Remove(atividade);
+
+            return _dataContext.SaveChanges() > 0;
         }
     }
 }
