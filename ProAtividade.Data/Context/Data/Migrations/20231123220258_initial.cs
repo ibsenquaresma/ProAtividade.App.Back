@@ -1,8 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace ProAtividade.API.Data.Migrations
+namespace ProAtividade.Data.Context.Data.Migrations
 {
     /// <inheritdoc />
     public partial class initial : Migration
@@ -16,8 +17,10 @@ namespace ProAtividade.API.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Titulo = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Descricao = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Titulo = table.Column<string>(type: "varchar(100)", nullable: true),
+                    Descricao = table.Column<string>(type: "varchar(255)", nullable: true),
+                    DateCreation = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    DateConclusion = table.Column<DateTime>(type: "datetime2", nullable: true),
                     Prioridade = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
